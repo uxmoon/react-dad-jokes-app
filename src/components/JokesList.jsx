@@ -24,21 +24,35 @@ class JokesList extends Component {
         headers: { Accept: "application/json" },
       });
 
-      jokes.push({id: uuidv4(), text: response.data.joke, votes: 0});
+      jokes.push({ id: uuidv4(), text: response.data.joke, votes: 0 });
     }
 
     // console.log(jokes);
     this.setState({ jokes: jokes });
   }
 
-  handleVote(id, delta) {}
+  handleVote(id, delta) {
+    // find the correct joke "id" in the state and updated by adding/substacting "delta" to the votes
+    this.setState((prevState) => ({
+      // use .map() to create a new array
+      jokes: prevState.jokes.map((joke) =>
+        joke.id === id ? { ...joke, votes: joke.votes + delta } : joke
+      ),
+    }));
+  }
 
   render() {
     return (
       <div className="JokesList">
         <h1>Dad Jokes</h1>
         {this.state.jokes.map((joke) => (
-          <Joke id={joke.id} text={joke.text} votes={joke.votes} />
+          <Joke
+            id={joke.id}
+            text={joke.text}
+            votes={joke.votes}
+            upvote={() => this.handleVote(joke.id, 1)}
+            downvote={() => this.handleVote(joke.id, -1)}
+          />
         ))}
       </div>
     );

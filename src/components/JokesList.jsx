@@ -12,6 +12,7 @@ class JokesList extends Component {
     super(props);
     // get jokes from localStorage
     this.state = {
+      loading: false,
       jokes: JSON.parse(window.localStorage.getItem("jokes") || "[]"),
     };
     this.handleClick = this.handleClick.bind(this);
@@ -39,6 +40,7 @@ class JokesList extends Component {
     // Update state to add new jokes when requesting new ones
     this.setState(
       (prevState) => ({
+        loading: false,
         jokes: [...prevState.jokes, ...jokes],
       }),
       // Update localStorage with new jokes after the state is updated
@@ -64,10 +66,18 @@ class JokesList extends Component {
 
   // Get new jokes
   handleClick() {
-    this.getJokes();
+    this.setState({ loading: true }, this.getJokes);
   }
 
   render() {
+    if(this.state.loading) {
+      return (
+        <div className="JokesList-loader">
+          <i className="far fa-8x fa-laugh fa-spin" />
+          <p>Loading jokes...</p>
+        </div>
+      )
+    }
     return (
       <div className="JokesList">
         <header>

@@ -95,6 +95,10 @@ class JokesList extends Component {
         </div>
       );
     }
+
+    // Sort jokes by votes
+    const jokes = this.state.jokes.sort((a, b) => b.votes - a.votes);
+    
     return (
       <div className="JokesList">
         <header>
@@ -106,7 +110,7 @@ class JokesList extends Component {
           </button>
         </aside>
         <main>
-          {this.state.jokes.map((joke) => (
+          {jokes.map((joke) => (
             <Joke
               key={joke.id}
               text={joke.text}

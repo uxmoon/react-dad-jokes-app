@@ -1,4 +1,5 @@
 import axios from "axios";
+import Joke from "./Joke";
 import React, { Component } from "react";
 
 class JokesList extends Component {
@@ -34,7 +35,7 @@ class JokesList extends Component {
       <div className="JokesList">
         <h1>Dad Jokes</h1>
         {this.state.jokes.map((joke) => (
-          <p className="JokesList-item">{joke.text} - {joke.votes}</p>
+          <Joke text={joke.text} votes={joke.votes} />
         ))}
       </div>
     );

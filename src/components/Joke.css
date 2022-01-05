@@ -1,0 +1,14 @@
+.Joke-votes {
+  border: 1px solid #f00;
+  padding: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  line-height: 1;
+  margin: 0;
+  text-align: center;
+  border-radius: 50%;
+}
+
+.Joke {
+  display: flex;
+}

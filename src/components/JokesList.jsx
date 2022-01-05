@@ -36,11 +36,15 @@ class JokesList extends Component {
       jokes.push({ id: uuidv4(), text: response.data.joke, votes: 0 });
     }
 
-    // console.log(jokes);
-    this.setState({ jokes: jokes });
-
-    // save jokes to localStorage
-    window.localStorage.setItem("jokes", JSON.stringify(jokes));
+    // Update state to add new jokes when requesting new ones
+    this.setState(
+      (prevState) => ({
+        jokes: [...prevState.jokes, ...jokes],
+      }),
+      // Update localStorage with new jokes after the state is updated
+      () =>
+        window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes))
+    );
   }
 
   handleVote(id, delta) {

@@ -58,7 +58,7 @@ class JokesList extends Component {
         <h1>Dad Jokes</h1>
         {this.state.jokes.map((joke) => (
           <Joke
-            id={joke.id}
+            key={joke.id}
             text={joke.text}
             votes={joke.votes}
             upvote={() => this.handleVote(joke.id, 1)}

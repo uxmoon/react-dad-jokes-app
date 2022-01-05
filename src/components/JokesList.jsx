@@ -15,6 +15,11 @@ class JokesList extends Component {
       loading: false,
       jokes: JSON.parse(window.localStorage.getItem("jokes") || "[]"),
     };
+
+    // prevent duplicate jokes with Set()
+    this.seenJokes = new Set(this.state.jokes.map((joke) => joke.text));
+    console.log(this.seenJokes);
+
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -24,29 +29,41 @@ class JokesList extends Component {
   }
 
   async getJokes() {
-    // create array of jokes
-    let jokes = [];
+    try {
+      // create array of jokes
+      let jokes = [];
 
-    // get 10 jokes
-    while (jokes.length < this.props.jokesNum) {
-      // Load jokes
-      let response = await axios.get("https://icanhazdadjoke.com/", {
-        headers: { Accept: "application/json" },
-      });
+      // get 10 jokes
+      while (jokes.length < this.props.jokesNum) {
+        // Load jokes
+        let response = await axios.get("https://icanhazdadjoke.com/", {
+          headers: { Accept: "application/json" },
+        });
 
-      jokes.push({ id: uuidv4(), text: response.data.joke, votes: 0 });
+        // check for duplicate jokes
+        let newJoke = response.data.joke;
+        if (!this.seenJokes.has(newJoke)) {
+          jokes.push({ id: uuidv4(), text: newJoke, votes: 0 });
+        } else {
+          console.log("FIND A DUPLICATE");
+          console.log(newJoke);
+        }
+      }
+
+      // Update state to add new jokes when requesting new ones
+      this.setState(
+        (prevState) => ({
+          loading: false,
+          jokes: [...prevState.jokes, ...jokes],
+        }),
+        // Update localStorage with new jokes after the state is updated
+        () =>
+          window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes))
+      );
+    } catch (e) {
+      alert(e);
+      this.setState({ loading: false });
     }
-
-    // Update state to add new jokes when requesting new ones
-    this.setState(
-      (prevState) => ({
-        loading: false,
-        jokes: [...prevState.jokes, ...jokes],
-      }),
-      // Update localStorage with new jokes after the state is updated
-      () =>
-        window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes))
-    );
   }
 
   handleVote(id, delta) {
@@ -70,13 +87,13 @@ class JokesList extends Component {
   }
 
   render() {
-    if(this.state.loading) {
+    if (this.state.loading) {
       return (
         <div className="JokesList-loader">
           <i className="far fa-8x fa-laugh fa-spin" />
           <p>Loading jokes...</p>
         </div>
-      )
+      );
     }
     return (
       <div className="JokesList">

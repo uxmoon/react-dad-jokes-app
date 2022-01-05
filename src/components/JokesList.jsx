@@ -1,5 +1,6 @@
 import axios from "axios";
 import Joke from "./Joke";
+import { v4 as uuidv4 } from "uuid";
 import React, { Component } from "react";
 
 class JokesList extends Component {
@@ -23,19 +24,21 @@ class JokesList extends Component {
         headers: { Accept: "application/json" },
       });
 
-      jokes.push({text: response.data.joke, votes: 0});
+      jokes.push({id: uuidv4(), text: response.data.joke, votes: 0});
     }
 
     // console.log(jokes);
     this.setState({ jokes: jokes });
   }
 
+  handleVote(id, delta) {}
+
   render() {
     return (
       <div className="JokesList">
         <h1>Dad Jokes</h1>
         {this.state.jokes.map((joke) => (
-          <Joke text={joke.text} votes={joke.votes} />
+          <Joke id={joke.id} text={joke.text} votes={joke.votes} />
         ))}
       </div>
     );

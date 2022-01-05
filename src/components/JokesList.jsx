@@ -14,6 +14,7 @@ class JokesList extends Component {
     this.state = {
       jokes: JSON.parse(window.localStorage.getItem("jokes") || "[]"),
     };
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -44,27 +45,46 @@ class JokesList extends Component {
 
   handleVote(id, delta) {
     // find the correct joke "id" in the state and updated by adding/substacting "delta" to the votes
-    this.setState((prevState) => ({
-      // use .map() to create a new array
-      jokes: prevState.jokes.map((joke) =>
-        joke.id === id ? { ...joke, votes: joke.votes + delta } : joke
-      ),
-    }));
+    this.setState(
+      (prevState) => ({
+        // use .map() to create a new array
+        jokes: prevState.jokes.map((joke) =>
+          joke.id === id ? { ...joke, votes: joke.votes + delta } : joke
+        ),
+      }),
+      // Update localStorage after the state is updated with votes
+      () =>
+        window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes))
+    );
+  }
+
+  // Get new jokes
+  handleClick() {
+    this.getJokes();
   }
 
   render() {
     return (
       <div className="JokesList">
-        <h1>Dad Jokes</h1>
-        {this.state.jokes.map((joke) => (
-          <Joke
-            key={joke.id}
-            text={joke.text}
-            votes={joke.votes}
-            upvote={() => this.handleVote(joke.id, 1)}
-            downvote={() => this.handleVote(joke.id, -1)}
-          />
-        ))}
+        <header>
+          <h1>Dad Jokes</h1>
+        </header>
+        <aside>
+          <button type="button" onClick={this.handleClick}>
+            Get new jokes
+          </button>
+        </aside>
+        <main>
+          {this.state.jokes.map((joke) => (
+            <Joke
+              key={joke.id}
+              text={joke.text}
+              votes={joke.votes}
+              upvote={() => this.handleVote(joke.id, 1)}
+              downvote={() => this.handleVote(joke.id, -1)}
+            />
+          ))}
+        </main>
       </div>
     );
   }

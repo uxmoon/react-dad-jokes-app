@@ -10,10 +10,18 @@ class JokesList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { jokes: [] };
+    // get jokes from localStorage
+    this.state = {
+      jokes: JSON.parse(window.localStorage.getItem("jokes") || "[]"),
+    };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    // don't overwrite jokes everytime we refresh the App
+    if (this.state.jokes.length === 0) this.getJokes();
+  }
+
+  async getJokes() {
     // create array of jokes
     let jokes = [];
 
@@ -29,6 +37,9 @@ class JokesList extends Component {
 
     // console.log(jokes);
     this.setState({ jokes: jokes });
+
+    // save jokes to localStorage
+    window.localStorage.setItem("jokes", JSON.stringify(jokes));
   }
 
   handleVote(id, delta) {
